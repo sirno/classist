@@ -1,8 +1,9 @@
+"""Classist decorator for Python classes."""
+
 import inspect
 
 
 def decorator(cls):
-    print("Decorating", cls)
     base_classes = cls.__bases__
 
     assert isinstance(base_classes, tuple)
@@ -12,7 +13,7 @@ def decorator(cls):
     if base_classes[0].__name__ == "object":
         return cls
 
-    print("Getting methods.")
+    # Get all methods of the class
     methods = inspect.getmembers(cls, predicate=inspect.isfunction)
     base_methods = {
         method_name: method
@@ -21,12 +22,9 @@ def decorator(cls):
             base_cls, predicate=inspect.isfunction
         )
     }
-    print(methods)
 
     for method_name, method in methods:
         base_method = base_methods.get(method_name)
-
-        print("Method:", method_name)
 
         # Skip the method if it is not a method of any base class
         if base_method is None:
@@ -36,6 +34,7 @@ def decorator(cls):
         if method == base_method:
             continue
 
+        # Create a new signature for the method
         method_signature = inspect.signature(method)
         base_method_signature = inspect.signature(base_method)
 
